@@ -17,6 +17,7 @@ from utils.platform_detector import detect_platform
 from utils.spotify_handler import SpotifyHandler, SpotifyError
 from utils.music_engine import MusicQueue, YTDLSource, Song
 from utils.presence import update_presence
+from utils.player_view import PlayerView
 from utils.embeds import (
     create_error_embed, create_success_embed, create_now_playing_embed,
     create_queue_embed, create_added_song_embed, create_added_playlist_embed
@@ -36,10 +37,6 @@ class QueueView(discord.ui.View):
     def generate_embed(self):
         # We now use our dedicated embed generator, passing the page
         from utils.embeds import create_queue_embed
-        # We need a reference to the actual queue object for now_playing, 
-        # but our view only takes the list. We'll stick to the inline logic we wrote earlier, 
-        # or use create_queue_embed if we modify the view to take MusicQueue instead.
-        # Let's keep inline for the UI view to prevent circular deps or complexity.
         embed = discord.Embed(title="🎶 Current Queue", color=COLORS['default'])
         start = (self.page - 1) * 10
         end = start + 10
@@ -60,7 +57,6 @@ class QueueView(discord.ui.View):
             self.page -= 1
             await interaction.response.edit_message(embed=self.generate_embed(), view=self)
         else:
-            # Acknowledge quietly if they spam previous on page 1
             await interaction.response.defer()
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
@@ -202,6 +198,11 @@ class Music(commands.Cog):
 
         if not next_song:
             asyncio.run_coroutine_threadsafe(update_presence(self.bot, None), self.bot.loop)
+            
+            # Start idle timer when song ends and queue is empty
+            voice_events_cog = self.bot.get_cog("VoiceEvents")
+            if voice_events_cog:
+                voice_events_cog.start_idle_timer(interaction.guild_id, bot_voice)
             return # End of queue reached
 
         asyncio.run_coroutine_threadsafe(self.start_playback(interaction, next_song, q), self.bot.loop)
@@ -213,6 +214,11 @@ class Music(commands.Cog):
             return
 
         try:
+            # Cancel idle timer if a new song starts playing
+            voice_events_cog = self.bot.get_cog("VoiceEvents")
+            if voice_events_cog:
+                voice_events_cog.cancel_idle_timer(interaction.guild_id)
+
             # Lazy Loading: Spotify songs are resolved to YouTube streams just in time for playback
             if song.platform == "spotify":
                 query = f"{getattr(song, 'artist', '')} - {song.title} audio"
@@ -252,6 +258,14 @@ class Music(commands.Cog):
         # Defer immediately as searching / scraping can take >3 seconds
         await interaction.response.defer()
         
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
+        # Cancel idle timer when user uses /play
+        voice_events_cog = self.bot.get_cog("VoiceEvents")
+        if voice_events_cog:
+            voice_events_cog.cancel_idle_timer(interaction.guild_id)
+
         if not await self._ensure_voice(interaction):
             return
 
@@ -262,7 +276,6 @@ class Music(commands.Cog):
             except discord.ClientException as e:
                 return await interaction.followup.send(f"❌ Could not connect to voice channel: {e}")
         
-        q = self.get_queue(interaction.guild_id)
         platform = detect_platform(query)
         added_songs = []
         
@@ -334,7 +347,6 @@ class Music(commands.Cog):
                 position = len(q.queue)
                 await interaction.followup.send(embed=create_added_song_embed(s, position))
             else:
-                # E.g. "Playlist Name" extraction from URL is complex, so we'll use a placeholder or the query
                 await interaction.followup.send(embed=create_added_playlist_embed("Spotify Playlist / Album", query, "spotify", len(added_songs), total_dur))
                 
             # --- Start playback if currently idle ---
@@ -350,11 +362,13 @@ class Music(commands.Cog):
 
     @app_commands.command(name="pause", description="Pauses current playback.")
     async def pause(self, interaction: discord.Interaction):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if not await self._ensure_voice(interaction): return
         bot_voice = interaction.guild.voice_client
         if bot_voice and bot_voice.is_playing():
             bot_voice.pause()
-            q = self.get_queue(interaction.guild_id)
             if q.now_playing:
                 await update_presence(self.bot, q.now_playing, paused=True)
             await interaction.response.send_message("⏸️ **Paused the music.**")
@@ -364,11 +378,13 @@ class Music(commands.Cog):
 
     @app_commands.command(name="resume", description="Resumes paused playback.")
     async def resume(self, interaction: discord.Interaction):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if not await self._ensure_voice(interaction): return
         bot_voice = interaction.guild.voice_client
         if bot_voice and bot_voice.is_paused():
             bot_voice.resume()
-            q = self.get_queue(interaction.guild_id)
             if q.now_playing:
                 await update_presence(self.bot, q.now_playing, paused=False)
             await interaction.response.send_message("▶️ **Resumed the music.**")
@@ -378,9 +394,11 @@ class Music(commands.Cog):
 
     @app_commands.command(name="stop", description="Stops playback and clears the queue.")
     async def stop(self, interaction: discord.Interaction):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if not await self._ensure_voice(interaction): return
         bot_voice = interaction.guild.voice_client
-        q = self.get_queue(interaction.guild_id)
         
         q.clear()
         q.pending_next_song = None # Reset overrides
@@ -391,12 +409,19 @@ class Music(commands.Cog):
             
         await interaction.response.send_message("⏹️ **Stopped playback and cleared the queue.**")
 
+        # Start idle timer when /stop command used
+        voice_events_cog = self.bot.get_cog("VoiceEvents")
+        if voice_events_cog and bot_voice:
+            voice_events_cog.start_idle_timer(interaction.guild_id, bot_voice)
+
 
     @app_commands.command(name="skip", description="Skips to the next song.")
     async def skip(self, interaction: discord.Interaction):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if not await self._ensure_voice(interaction): return
         bot_voice = interaction.guild.voice_client
-        q = self.get_queue(interaction.guild_id)
         
         # Force skip breaks the song loop explicitly
         next_song = q.skip(force=True)
@@ -411,9 +436,11 @@ class Music(commands.Cog):
 
     @app_commands.command(name="previous", description="Goes back to the previous song.")
     async def previous(self, interaction: discord.Interaction):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if not await self._ensure_voice(interaction): return
         bot_voice = interaction.guild.voice_client
-        q = self.get_queue(interaction.guild_id)
         
         prev_song = q.previous()
         if prev_song:
@@ -428,22 +455,34 @@ class Music(commands.Cog):
     @app_commands.command(name="queue", description="Shows the current queue.")
     async def queue(self, interaction: discord.Interaction):
         q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if q.is_empty:
             return await interaction.response.send_message("📭 The queue is currently empty.")
             
         view = QueueView(list(q.queue))
         await interaction.response.send_message(embed=view.generate_embed(), view=view)
 
+
     @app_commands.command(name="nowplaying", description="Shows the currently playing song.")
     async def nowplaying(self, interaction: discord.Interaction):
         q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if not q.now_playing:
             return await interaction.response.send_message(embed=create_error_embed("Nothing is currently playing."), ephemeral=True)
             
-        await interaction.response.send_message(embed=create_now_playing_embed(q))
+        view = PlayerView(self, interaction.guild_id)
+        embed = create_now_playing_embed(q)
+        await interaction.response.send_message(embed=embed, view=view)
+        view.message = await interaction.original_response()
+
 
     @app_commands.command(name="volume", description="Sets the playback volume (0-100).")
     async def volume(self, interaction: discord.Interaction, level: int):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         if not await self._ensure_voice(interaction): return
         bot_voice = interaction.guild.voice_client
         
@@ -463,6 +502,8 @@ class Music(commands.Cog):
     ])
     async def loop(self, interaction: discord.Interaction, mode: app_commands.Choice[str]):
         q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         q.loop_mode = mode.value
         await interaction.response.send_message(f"🔁 **Loop mode set to:** {mode.name}")
 
@@ -470,6 +511,8 @@ class Music(commands.Cog):
     @app_commands.command(name="shuffle", description="Shuffles the upcoming queue.")
     async def shuffle(self, interaction: discord.Interaction):
         q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         q.shuffle()
         await interaction.response.send_message("🔀 **Queue shuffled!**")
 
@@ -477,6 +520,8 @@ class Music(commands.Cog):
     @app_commands.command(name="remove", description="Removes a song from the queue by its index.")
     async def remove(self, interaction: discord.Interaction, index: int):
         q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         song = q.remove(index - 1) 
         if song:
             await interaction.response.send_message(f"🗑️ Removed **{song.title}** from the queue.")
@@ -487,15 +532,24 @@ class Music(commands.Cog):
     @app_commands.command(name="clear", description="Clears the entire upcoming queue.")
     async def clear(self, interaction: discord.Interaction):
         q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
         q.clear()
         await interaction.response.send_message("🧹 **Queue cleared.**")
+
+        # Start idle timer when /clear command used
+        bot_voice = interaction.guild.voice_client
+        voice_events_cog = self.bot.get_cog("VoiceEvents")
+        if voice_events_cog and bot_voice:
+            voice_events_cog.start_idle_timer(interaction.guild_id, bot_voice)
 
 
     @app_commands.command(name="disconnect", description="Disconnects the bot from the voice channel.")
     async def disconnect(self, interaction: discord.Interaction):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         bot_voice = interaction.guild.voice_client
         if bot_voice:
-            q = self.get_queue(interaction.guild_id)
             q.clear()
             q.pending_next_song = None
             await update_presence(self.bot, None)
@@ -504,8 +558,12 @@ class Music(commands.Cog):
         else:
             await interaction.response.send_message("❌ I'm not in a voice channel.", ephemeral=True)
 
+
     @app_commands.command(name="help", description="Shows all available music commands.")
     async def help_command(self, interaction: discord.Interaction):
+        q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
+
         embed = discord.Embed(
             title="🎶 Music Bot Commands",
             description="Supports: 🔴 YouTube | 🟢 Spotify | 🟠 SoundCloud",
@@ -549,12 +607,14 @@ class Music(commands.Cog):
         embed.set_footer(text="Use /help or e!help anytime")
         await interaction.response.send_message(embed=embed)
 
+
     @app_commands.command(name="lyrics", description="Shows the lyrics of the current song or a searched song.")
     @app_commands.describe(query="The song title to search for (optional).")
     async def lyrics(self, interaction: discord.Interaction, query: Optional[str] = None):
         await interaction.response.defer()
         
         q = self.get_queue(interaction.guild_id)
+        q.last_channel = interaction.channel
         
         search_title = ""
         search_artist = ""

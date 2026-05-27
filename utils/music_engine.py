@@ -58,6 +58,8 @@ class MusicQueue:
         self._history: List[Song] = []
         self.now_playing: Optional[Song] = None
         self.loop_mode: Literal["off", "song", "queue"] = "off"
+        self.player_message: Optional[discord.Message] = None
+        self.last_channel: Optional[discord.TextChannel] = None
 
     def add(self, song: Song):
         """Adds a song to the end of the queue."""

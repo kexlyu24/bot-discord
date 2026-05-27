@@ -17,6 +17,7 @@ from utils.platform_detector import detect_platform
 from utils.spotify_handler import SpotifyHandler, SpotifyError
 from utils.music_engine import MusicQueue, YTDLSource, Song
 from utils.presence import update_presence
+from utils.player_view import PlayerView
 from utils.embeds import (
     create_error_embed, create_success_embed, create_now_playing_embed,
     create_queue_embed, create_added_song_embed, create_added_playlist_embed
@@ -57,6 +58,11 @@ class PrefixMusic(commands.Cog):
 
         if not next_song:
             asyncio.run_coroutine_threadsafe(update_presence(self.bot, None), self.bot.loop)
+            
+            # Start idle timer when song ends and queue is empty
+            voice_events_cog = self.bot.get_cog("VoiceEvents")
+            if voice_events_cog:
+                voice_events_cog.start_idle_timer(ctx.guild.id, bot_voice)
             return # End of queue reached
 
         asyncio.run_coroutine_threadsafe(self.start_playback(ctx, next_song, q), self.bot.loop)
@@ -67,6 +73,11 @@ class PrefixMusic(commands.Cog):
             return
 
         try:
+            # Cancel idle timer if a new song starts playing
+            voice_events_cog = self.bot.get_cog("VoiceEvents")
+            if voice_events_cog:
+                voice_events_cog.cancel_idle_timer(ctx.guild.id)
+
             # Lazy Loading: Spotify songs are resolved to YouTube streams just in time for playback
             if song.platform == "spotify":
                 query = f"{getattr(song, 'artist', '')} - {song.title} audio"
@@ -125,6 +136,14 @@ class PrefixMusic(commands.Cog):
     
     @commands.command(name="play", aliases=["p"])
     async def play(self, ctx: commands.Context, *, query: str = None):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
+        # Cancel idle timer when user uses e!play
+        voice_events_cog = self.bot.get_cog("VoiceEvents")
+        if voice_events_cog:
+            voice_events_cog.cancel_idle_timer(ctx.guild.id)
+
         if not query:
             embed = discord.Embed(
                 title="🎵 Play Command Usage",
@@ -139,7 +158,6 @@ class PrefixMusic(commands.Cog):
         if not bot_voice:
             bot_voice = await ctx.author.voice.channel.connect()
             
-        q = self.get_queue(ctx.guild.id)
         platform = detect_platform(query)
         added_songs = []
         
@@ -218,11 +236,13 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="pause")
     async def pause(self, ctx: commands.Context):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if not await self._ensure_voice(ctx): return
         bot_voice = ctx.guild.voice_client
         if bot_voice.is_playing():
             bot_voice.pause()
-            q = self.get_queue(ctx.guild.id)
             if q.now_playing:
                 await update_presence(self.bot, q.now_playing, paused=True)
             await ctx.send(embed=create_success_embed("Paused the music. ⏸️"))
@@ -231,11 +251,13 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="resume")
     async def resume(self, ctx: commands.Context):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if not await self._ensure_voice(ctx): return
         bot_voice = ctx.guild.voice_client
         if bot_voice.is_paused():
             bot_voice.resume()
-            q = self.get_queue(ctx.guild.id)
             if q.now_playing:
                 await update_presence(self.bot, q.now_playing, paused=False)
             await ctx.send(embed=create_success_embed("Resumed the music. ▶️"))
@@ -244,9 +266,11 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="stop")
     async def stop(self, ctx: commands.Context):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if not await self._ensure_voice(ctx): return
         bot_voice = ctx.guild.voice_client
-        q = self.get_queue(ctx.guild.id)
         q.clear()
         q.now_playing = None
         await update_presence(self.bot, None)
@@ -254,8 +278,16 @@ class PrefixMusic(commands.Cog):
             bot_voice.stop()
         await ctx.send(embed=create_success_embed("Stopped playback and cleared the queue. 🛑"))
 
+        # Start idle timer when e!stop command used
+        voice_events_cog = self.bot.get_cog("VoiceEvents")
+        if voice_events_cog and bot_voice:
+            voice_events_cog.start_idle_timer(ctx.guild.id, bot_voice)
+
     @commands.command(name="skip", aliases=["s"])
     async def skip(self, ctx: commands.Context):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if not await self._ensure_voice(ctx): return
         bot_voice = ctx.guild.voice_client
         if bot_voice.is_playing() or bot_voice.is_paused():
@@ -266,8 +298,10 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="previous", aliases=["prev"])
     async def previous(self, ctx: commands.Context):
-        if not await self._ensure_voice(ctx): return
         q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
+        if not await self._ensure_voice(ctx): return
         bot_voice = ctx.guild.voice_client
         
         prev_song = q.previous()
@@ -287,6 +321,8 @@ class PrefixMusic(commands.Cog):
     @commands.command(name="queue", aliases=["q"])
     async def queue(self, ctx: commands.Context):
         q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if q.is_empty:
             return await ctx.send("📭 The queue is currently empty.")
             
@@ -296,12 +332,21 @@ class PrefixMusic(commands.Cog):
     @commands.command(name="nowplaying", aliases=["np"])
     async def nowplaying(self, ctx: commands.Context):
         q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if not q.now_playing:
             return await ctx.send(embed=create_error_embed("Nothing is currently playing."))
-        await ctx.send(embed=create_now_playing_embed(q))
+            
+        view = PlayerView(self, ctx.guild.id)
+        embed = create_now_playing_embed(q)
+        msg = await ctx.send(embed=embed, view=view)
+        view.message = msg
 
     @commands.command(name="volume", aliases=["vol"])
     async def volume(self, ctx: commands.Context, level: int):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if not await self._ensure_voice(ctx): return
         bot_voice = ctx.guild.voice_client
         if bot_voice and bot_voice.source:
@@ -315,8 +360,10 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="loop")
     async def loop(self, ctx: commands.Context, mode: str):
-        if not await self._ensure_voice(ctx): return
         q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
+        if not await self._ensure_voice(ctx): return
         mode = mode.lower()
         if mode in ["off", "song", "queue"]:
             q.loop_mode = mode
@@ -327,8 +374,10 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="shuffle")
     async def shuffle(self, ctx: commands.Context):
-        if not await self._ensure_voice(ctx): return
         q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
+        if not await self._ensure_voice(ctx): return
         if q.is_empty:
             return await ctx.send(embed=create_error_embed("Queue is empty, nothing to shuffle."))
         q.shuffle()
@@ -336,8 +385,10 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="remove", aliases=["rm"])
     async def remove(self, ctx: commands.Context, index: int):
-        if not await self._ensure_voice(ctx): return
         q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
+        if not await self._ensure_voice(ctx): return
         removed = q.remove(index - 1)
         if removed:
             await ctx.send(embed=create_success_embed(f"Removed **{removed.title}** from the queue."))
@@ -346,16 +397,26 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="clear")
     async def clear(self, ctx: commands.Context):
-        if not await self._ensure_voice(ctx): return
         q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
+        if not await self._ensure_voice(ctx): return
         q.clear()
         await ctx.send(embed=create_success_embed("Cleared the upcoming queue! 🗑️"))
 
+        # Start idle timer when e!clear command used
+        bot_voice = ctx.guild.voice_client
+        voice_events_cog = self.bot.get_cog("VoiceEvents")
+        if voice_events_cog and bot_voice:
+            voice_events_cog.start_idle_timer(ctx.guild.id, bot_voice)
+
     @commands.command(name="disconnect", aliases=["dc", "leave"])
     async def disconnect(self, ctx: commands.Context):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         if not await self._ensure_voice(ctx): return
         bot_voice = ctx.guild.voice_client
-        q = self.get_queue(ctx.guild.id)
         q.clear()
         await update_presence(self.bot, None)
         if bot_voice:
@@ -365,6 +426,9 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="help")
     async def help_command(self, ctx: commands.Context):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         embed = discord.Embed(
             title="🎶 Music Bot Commands",
             description="Supports: 🔴 YouTube | 🟢 Spotify | 🟠 SoundCloud",
@@ -410,9 +474,10 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="lyrics")
     async def lyrics_command(self, ctx: commands.Context, *, query: Optional[str] = None):
+        q = self.get_queue(ctx.guild.id)
+        q.last_channel = ctx.channel
+
         async with ctx.typing():
-            q = self.get_queue(ctx.guild.id)
-            
             search_title = ""
             search_artist = ""
             
