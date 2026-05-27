@@ -74,8 +74,13 @@ def create_now_playing_embed(queue: MusicQueue) -> discord.Embed:
     
     # Requester Details (Avatar + Name)
     requester = song.requester
-    avatar_url = requester.display_avatar.url if requester.display_avatar else None
-    embed.set_author(name=f"Requested by {requester.display_name}", icon_url=avatar_url)
+    avatar = getattr(requester, 'display_avatar', None)
+    if avatar is None:
+        avatar = getattr(requester, 'avatar', None)
+    avatar_url = avatar.url if avatar else None
+    
+    display_name = getattr(requester, 'display_name', requester.name)
+    embed.set_author(name=f"Requested by {display_name}", icon_url=avatar_url)
     
     # Status Footers
     loop_icons = {"off": "➡️ Off", "song": "🔂 Song", "queue": "🔁 Queue"}

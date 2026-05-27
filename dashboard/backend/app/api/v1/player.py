@@ -155,7 +155,10 @@ async def play_song(
         def __init__(self, uid, uname):
             self.id = int(uid)
             self.name = uname
+            self.display_name = uname
             self.mention = f"<@{uid}>"
+            self.display_avatar = None
+            self.avatar = None
     requester = RequesterMock(current_user["user_id"], current_user["username"])
     
     platform = detect_platform(play_req.query)
