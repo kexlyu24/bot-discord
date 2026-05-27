@@ -344,6 +344,7 @@ class Music(commands.Cog):
         if q.is_empty:
             return await interaction.response.send_message("📭 The queue is currently empty.")
             
+        view = QueueView(list(q.queue))
         await interaction.response.send_message(embed=view.generate_embed(), view=view)
 
     @app_commands.command(name="nowplaying", description="Shows the currently playing song.")
@@ -354,7 +355,7 @@ class Music(commands.Cog):
             
         await interaction.response.send_message(embed=create_now_playing_embed(q))
 
-    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")
     async def volume(self, interaction: discord.Interaction, level: int):
         if not await self._ensure_voice(interaction): return
         bot_voice = interaction.guild.voice_client

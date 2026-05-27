@@ -1,0 +1,724 @@
+[2026-05-27 12:31:30] [INFO] discord: =====================================
+[2026-05-27 12:31:30] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:31:30] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:31:30] [ERROR] discord: ❌ FFmpeg: NOT FOUND IN PATH!
+[2026-05-27 12:31:30] [ERROR] discord: 🔧 FIX: Download FFmpeg (https://ffmpeg.org/download.html) and add it to your System PATH environment variables.
+[2026-05-27 12:31:30] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:31:30] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:31:31] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:31:31] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:31:31] [INFO] discord: =====================================
+[2026-05-27 12:31:31] [INFO] discord.client: logging in using static token
+[2026-05-27 12:31:32] [INFO] discord: Setting up cogs...
+[2026-05-27 12:31:32] [ERROR] discord: Failed to load cog events.py: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\events.py", line 7, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 60, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:31:32] [ERROR] discord: Failed to load cog music.py: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 60, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:31:32] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:31:32] [INFO] discord: Successfully synced 0 slash command(s).
+[2026-05-27 12:31:33] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 12:31:33] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 12:31:33] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 12:31:33] [CRITICAL] discord: Fatal error while running bot: Shard ID None is requesting privileged intents that have not been explicitly enabled in the developer portal. It is recommended to go to https://discord.com/developers/applications/ and explicitly enable the privileged intents within your application's page. If this is not possible, then consider disabling the privileged intents instead.
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 141, in <module>
+    bot.run(DISCORD_TOKEN, log_handler=None)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 933, in run
+    asyncio.run(runner())
+    ~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 922, in runner
+    await self.start(token, reconnect=reconnect)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 851, in start
+    await self.connect(reconnect=reconnect)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 775, in connect
+    raise PrivilegedIntentsRequired(exc.shard_id) from None
+discord.errors.PrivilegedIntentsRequired: Shard ID None is requesting privileged intents that have not been explicitly enabled in the developer portal. It is recommended to go to https://discord.com/developers/applications/ and explicitly enable the privileged intents within your application's page. If this is not possible, then consider disabling the privileged intents instead.
+[2026-05-27 12:32:00] [INFO] discord: =====================================
+[2026-05-27 12:32:00] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:32:00] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:32:00] [ERROR] discord: ❌ FFmpeg: NOT FOUND IN PATH!
+[2026-05-27 12:32:00] [ERROR] discord: 🔧 FIX: Download FFmpeg (https://ffmpeg.org/download.html) and add it to your System PATH environment variables.
+[2026-05-27 12:32:00] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:32:00] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:32:01] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:32:01] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:32:01] [INFO] discord: =====================================
+[2026-05-27 12:32:01] [INFO] discord.client: logging in using static token
+[2026-05-27 12:32:01] [INFO] discord: Setting up cogs...
+[2026-05-27 12:32:01] [ERROR] discord: Failed to load cog events.py: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\events.py", line 7, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 60, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:32:01] [ERROR] discord: Failed to load cog music.py: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 60, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:32:01] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:32:32] [INFO] discord: Successfully synced 0 slash command(s).
+[2026-05-27 12:32:34] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 12:32:34] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 12:32:34] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 12:32:34] [CRITICAL] discord: Fatal error while running bot: Shard ID None is requesting privileged intents that have not been explicitly enabled in the developer portal. It is recommended to go to https://discord.com/developers/applications/ and explicitly enable the privileged intents within your application's page. If this is not possible, then consider disabling the privileged intents instead.
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 141, in <module>
+    bot.run(DISCORD_TOKEN, log_handler=None)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 933, in run
+    asyncio.run(runner())
+    ~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 922, in runner
+    await self.start(token, reconnect=reconnect)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 851, in start
+    await self.connect(reconnect=reconnect)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\client.py", line 775, in connect
+    raise PrivilegedIntentsRequired(exc.shard_id) from None
+discord.errors.PrivilegedIntentsRequired: Shard ID None is requesting privileged intents that have not been explicitly enabled in the developer portal. It is recommended to go to https://discord.com/developers/applications/ and explicitly enable the privileged intents within your application's page. If this is not possible, then consider disabling the privileged intents instead.
+[2026-05-27 12:33:01] [INFO] discord: =====================================
+[2026-05-27 12:33:01] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:33:01] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:33:01] [ERROR] discord: ❌ FFmpeg: NOT FOUND IN PATH!
+[2026-05-27 12:33:01] [ERROR] discord: 🔧 FIX: Download FFmpeg (https://ffmpeg.org/download.html) and add it to your System PATH environment variables.
+[2026-05-27 12:33:01] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:33:01] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:33:01] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:33:01] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:33:01] [INFO] discord: =====================================
+[2026-05-27 12:33:01] [INFO] discord.client: logging in using static token
+[2026-05-27 12:33:02] [INFO] discord: Setting up cogs...
+[2026-05-27 12:33:02] [ERROR] discord: Failed to load cog events.py: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\events.py", line 7, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 60, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:33:02] [ERROR] discord: Failed to load cog music.py: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 60, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:33:02] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:33:02] [INFO] discord: Successfully synced 0 slash command(s).
+[2026-05-27 12:33:03] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: e87ebda71ba52713bccbfe3a47f83657).
+[2026-05-27 12:33:05] [INFO] discord: =====================================
+[2026-05-27 12:33:05] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 12:33:05] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 12:33:05] [INFO] discord: =====================================
+[2026-05-27 12:34:44] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 12:34:44] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 12:34:44] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 12:40:13] [INFO] discord: =====================================
+[2026-05-27 12:40:13] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:40:13] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:40:13] [ERROR] discord: ❌ FFmpeg: NOT FOUND IN PATH!
+[2026-05-27 12:40:13] [ERROR] discord: 🔧 FIX: Download FFmpeg (https://ffmpeg.org/download.html) and add it to your System PATH environment variables.
+[2026-05-27 12:40:13] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:40:13] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:40:13] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:40:13] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:40:13] [INFO] discord: =====================================
+[2026-05-27 12:40:13] [INFO] discord.client: logging in using static token
+[2026-05-27 12:40:14] [INFO] discord: Setting up cogs...
+[2026-05-27 12:40:14] [ERROR] discord: Failed to load cog events.py: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\events.py", line 7, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:40:14] [ERROR] discord: Failed to load cog music.py: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:40:14] [ERROR] discord: Failed to load cog prefix_music.py: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 11, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:40:14] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:40:14] [INFO] discord: Successfully synced 0 slash command(s).
+[2026-05-27 12:40:15] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 9e87b7af60d7360c0f81348d44afd3e7).
+[2026-05-27 12:40:17] [INFO] discord: =====================================
+[2026-05-27 12:40:17] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 12:40:17] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 12:40:17] [INFO] discord: =====================================
+[2026-05-27 12:40:48] [INFO] discord: =====================================
+[2026-05-27 12:40:48] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:40:48] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:40:48] [ERROR] discord: ❌ FFmpeg: NOT FOUND IN PATH!
+[2026-05-27 12:40:48] [ERROR] discord: 🔧 FIX: Download FFmpeg (https://ffmpeg.org/download.html) and add it to your System PATH environment variables.
+[2026-05-27 12:40:48] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:40:48] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:40:49] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:40:49] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:40:49] [INFO] discord: =====================================
+[2026-05-27 12:40:49] [INFO] discord.client: logging in using static token
+[2026-05-27 12:40:50] [INFO] discord: Setting up cogs...
+[2026-05-27 12:40:50] [ERROR] discord: Failed to load cog events.py: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\events.py", line 7, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:40:50] [ERROR] discord: Failed to load cog music.py: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:40:50] [ERROR] discord: Failed to load cog prefix_music.py: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 11, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:40:50] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:40:50] [INFO] discord: Successfully synced 0 slash command(s).
+[2026-05-27 12:40:51] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 71d470402d9f68e84759e4b0049e0c50).
+[2026-05-27 12:40:52] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 12:40:52] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 12:40:52] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 12:46:01] [INFO] discord: =====================================
+[2026-05-27 12:46:01] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:46:01] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:46:01] [ERROR] discord: ❌ FFmpeg: NOT FOUND IN PATH!
+[2026-05-27 12:46:01] [ERROR] discord: 🔧 FIX: Download FFmpeg (https://ffmpeg.org/download.html) and add it to your System PATH environment variables.
+[2026-05-27 12:46:01] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:46:01] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:46:01] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:46:01] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:46:01] [INFO] discord: =====================================
+[2026-05-27 12:46:01] [INFO] discord.client: logging in using static token
+[2026-05-27 12:46:02] [INFO] discord: Setting up cogs...
+[2026-05-27 12:46:02] [ERROR] discord: Failed to load cog events.py: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\events.py", line 7, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:46:02] [ERROR] discord: Failed to load cog music.py: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:46:02] [ERROR] discord: Failed to load cog prefix_music.py: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 11, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:46:02] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:46:02] [INFO] discord: Successfully synced 0 slash command(s).
+[2026-05-27 12:46:03] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 36609f85ac95459b8e048145f1a2e245).
+[2026-05-27 12:46:05] [INFO] discord: =====================================
+[2026-05-27 12:46:05] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 12:46:05] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 12:46:05] [INFO] discord: =====================================
+[2026-05-27 12:46:31] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 12:46:31] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 12:46:31] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 12:47:24] [INFO] discord: =====================================
+[2026-05-27 12:47:24] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:47:24] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:47:25] [INFO] discord: ✅ FFmpeg: Found and ready.
+[2026-05-27 12:47:25] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:47:25] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:47:25] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:47:25] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:47:25] [INFO] discord: =====================================
+[2026-05-27 12:47:25] [INFO] discord.client: logging in using static token
+[2026-05-27 12:47:26] [INFO] discord: Setting up cogs...
+[2026-05-27 12:47:26] [ERROR] discord: Failed to load cog events.py: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\events.py", line 7, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.events' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:47:26] [ERROR] discord: Failed to load cog music.py: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:47:26] [ERROR] discord: Failed to load cog prefix_music.py: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 962, in _load_from_module_spec
+    spec.loader.exec_module(lib)  # type: ignore
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 11, in <module>
+    import cogs.music
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 357
+    @app_commands.command(name="volume", description="Sets the playback volume (0-100).")e="volume", description="Sets the playback volume (0-100).")
+                                                                                                                                                    ^
+SyntaxError: unmatched ')'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 965, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.prefix_music' raised an error: SyntaxError: unmatched ')' (music.py, line 357)
+[2026-05-27 12:47:26] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:47:26] [INFO] discord: Successfully synced 0 slash command(s).
+[2026-05-27 12:47:27] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 96ee873f630f0721bbe73c3eb286c764).
+[2026-05-27 12:47:29] [INFO] discord: =====================================
+[2026-05-27 12:47:29] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 12:47:29] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 12:47:29] [INFO] discord: =====================================
+[2026-05-27 12:49:46] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 12:49:46] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 12:49:46] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 12:52:30] [INFO] discord: =====================================
+[2026-05-27 12:52:30] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 12:52:30] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 12:52:30] [INFO] discord: ✅ FFmpeg: Found and ready.
+[2026-05-27 12:52:30] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 12:52:30] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 12:52:31] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:52:31] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 12:52:31] [INFO] discord: =====================================
+[2026-05-27 12:52:31] [INFO] discord.client: logging in using static token
+[2026-05-27 12:52:31] [INFO] discord: Setting up cogs...
+[2026-05-27 12:52:32] [INFO] discord: Loaded cog: events.py
+[2026-05-27 12:52:32] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 12:52:32] [INFO] discord: Loaded cog: music.py
+[2026-05-27 12:52:32] [ERROR] discord: Failed to load cog prefix_music.py: Extension 'cogs.prefix_music' raised an error: TypeError: SpotifyHandler.__init__() missing 2 required positional arguments: 'client_id' and 'client_secret'
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 974, in _load_from_module_spec
+    await setup(self)
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 357, in setup
+    await bot.add_cog(PrefixMusic(bot))
+                      ~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 29, in __init__
+    self.spotify = SpotifyHandler()
+                   ~~~~~~~~~~~~~~^^
+TypeError: SpotifyHandler.__init__() missing 2 required positional arguments: 'client_id' and 'client_secret'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 979, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.prefix_music' raised an error: TypeError: SpotifyHandler.__init__() missing 2 required positional arguments: 'client_id' and 'client_secret'
+[2026-05-27 12:52:32] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 12:52:32] [INFO] discord: Successfully synced 14 slash command(s).
+[2026-05-27 12:52:33] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: ff25d5af4ed85fe8a0c03b5e17d0b27a).
+[2026-05-27 12:52:35] [INFO] discord: =====================================
+[2026-05-27 12:52:35] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 12:52:35] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 12:52:35] [INFO] discord: =====================================
+[2026-05-27 12:52:58] [INFO] discord.voice_state: Connecting to voice...
+[2026-05-27 12:52:58] [INFO] discord.voice_state: Starting voice handshake... (connection attempt 1)
+[2026-05-27 12:52:59] [INFO] discord.voice_state: Voice handshake complete. Endpoint found: c-sin21-c9ca539d.discord.media:8443
+[2026-05-27 12:52:59] [INFO] discord.voice_state: Voice connection complete.
+[2026-05-27 12:52:59] [INFO] discord: Spotify API Call: track (Attempt 1/3)
+[2026-05-27 12:53:00] [ERROR] discord: Spotify API Exception on attempt 1: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/1LsisG6aoqfsF1r6M4LpMO:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:53:01] [INFO] discord: Spotify API Call: track (Attempt 2/3)
+[2026-05-27 12:53:01] [ERROR] discord: Spotify API Exception on attempt 2: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/1LsisG6aoqfsF1r6M4LpMO:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:53:02] [INFO] discord: Spotify API Call: track (Attempt 3/3)
+[2026-05-27 12:53:02] [ERROR] discord: Spotify API Exception on attempt 3: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/1LsisG6aoqfsF1r6M4LpMO:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 12:54:56] [ERROR] discord: App command error from comfortchainn: Command 'queue' raised an exception: NameError: name 'view' is not defined
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\commands.py", line 858, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 347, in queue
+    view = QueueView(list(q.queue))
+    
+NameError: name 'view' is not defined
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\tree.py", line 1302, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\commands.py", line 884, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\commands.py", line 877, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'queue' raised an exception: NameError: name 'view' is not defined
+[2026-05-27 12:55:03] [ERROR] discord: App command error from comfortchainn: Command 'queue' raised an exception: NameError: name 'view' is not defined
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\commands.py", line 858, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\music.py", line 347, in queue
+    view = QueueView(list(q.queue))
+    
+NameError: name 'view' is not defined
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\tree.py", line 1302, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\commands.py", line 884, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\app_commands\commands.py", line 877, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'queue' raised an exception: NameError: name 'view' is not defined
+[2026-05-27 12:57:14] [INFO] discord.player: ffmpeg process 9936 successfully terminated with return code of 0.
+[2026-05-27 13:02:23] [INFO] discord.player: ffmpeg process 13900 successfully terminated with return code of 0.

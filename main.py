@@ -40,9 +40,10 @@ class MusicBot(commands.Bot):
         intents.voice_states = True
         
         super().__init__(
-            command_prefix=commands.when_mentioned_or("!"),
+            command_prefix=commands.when_mentioned_or("e!"),
             intents=intents,
-            help_command=None # Disabling default help command as we use app_commands
+            case_insensitive=True,
+            help_command=None # Disabling default help command as we use app_commands and custom prefix help
         )
 
     async def setup_hook(self):
@@ -76,6 +77,44 @@ class MusicBot(commands.Bot):
     # ==========================================
     # 3. GLOBAL ERROR HANDLER
     # ==========================================
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+        """Global error handler for prefix commands."""
+        if isinstance(error, (commands.CommandNotFound, commands.NoPrivateMessage)):
+            return  # Silently ignore unknown commands and DM attempts
+            
+        if isinstance(error, (commands.MissingRequiredArgument, commands.BadArgument)):
+            from utils.embeds import create_error_embed
+            cmd = ctx.command.name
+            
+            if cmd == "volume":
+                usage = "e!volume [0-100]"
+                expected = "a number between 0 and 100"
+            elif cmd == "remove":
+                usage = "e!remove [index]"
+                expected = "the queue index (number)"
+            elif cmd == "loop":
+                usage = "e!loop [off/song/queue]"
+                expected = "off, song, or queue"
+            elif cmd == "play":
+                usage = "e!play [URL or Search]"
+                expected = "a song name or link"
+            else:
+                usage = f"e!{cmd} [arguments]"
+                expected = "the correct arguments"
+                
+            prefix = "Missing" if isinstance(error, commands.MissingRequiredArgument) else "Invalid"
+            msg = f"**{prefix} argument!**\n\n**Usage:** `{usage}`\n*Expected {expected}.*"
+            
+            await ctx.send(embed=create_error_embed(msg))
+            return
+            
+        if isinstance(error, commands.MissingPermissions):
+            from utils.embeds import create_error_embed
+            await ctx.send(embed=create_error_embed("You do not have the required permissions to use this command."))
+            return
+            
+        logger.error(f"Prefix command error from {ctx.author}: {error}")
+        
     async def on_app_command_error(self, interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
         """Global error handler for slash commands."""
         logger.error(f"App command error from {interaction.user}: {error}", exc_info=error)
