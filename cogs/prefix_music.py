@@ -26,7 +26,7 @@ class PrefixMusic(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
-        self.spotify = SpotifyHandler()
+        self.spotify = SpotifyHandler(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
         
     def get_queue(self, guild_id: int) -> MusicQueue:
         if guild_id not in cogs.music.queues:
@@ -45,47 +45,49 @@ class PrefixMusic(commands.Cog):
         
         q = self.get_queue(ctx.guild.id)
         
-        # Determine next song based on loop state
-        if q.loop_mode == "song" and q.now_playing:
-            next_song = q.now_playing
-        else:
-            if q.loop_mode == "queue" and q.now_playing and not q.pending_next_song:
-                q.queue.append(q.now_playing)
-                
-            next_song = q.pending_next_song if q.pending_next_song else q.skip()
+        # Override skip logic for manual /skip and /previous commands
+        if hasattr(q, "pending_next_song") and getattr(q, "pending_next_song") is not None:
+            next_song = q.pending_next_song
             q.pending_next_song = None
-            
-        if next_song:
-            self.start_playback(ctx, next_song, q)
         else:
-            q.now_playing = None
+            next_song = q.skip(force=False) 
 
-    def start_playback(self, ctx: commands.Context, song: Song, queue: MusicQueue):
+        if not next_song:
+            return # End of queue reached
+
+        asyncio.run_coroutine_threadsafe(self.start_playback(ctx, next_song, q), self.bot.loop)
+
+    async def start_playback(self, ctx: commands.Context, song: Song, queue: MusicQueue):
         bot_voice = ctx.guild.voice_client
-        if not bot_voice: return
-        
-        queue.now_playing = song
-        
+        if not bot_voice:
+            return
+
         try:
+            # Lazy Loading: Spotify songs are resolved to YouTube streams just in time for playback
             if song.platform == "spotify":
-                yt_song = YTDLSource.search_youtube(self.spotify.build_search_query(song))
-                source = yt_song.source
-            elif song.platform == "soundcloud":
-                source = YTDLSource.from_soundcloud(song.url).source
-            else:
-                source = YTDLSource.from_url(song.url).source
-                
+                query = f"{getattr(song, 'artist', '')} - {song.title} audio"
+                yt_song = await YTDLSource.search_youtube(query, song.requester, self.bot.loop)
+                song.stream_url = yt_song.stream_url
+                # We optionally update duration in case the YT mirror is slightly longer/shorter
+                if yt_song.duration > 0:
+                    song.duration = yt_song.duration
+            
+            source = await YTDLSource.create_source(song.stream_url)
+            
+            # Start timer for /nowplaying progress bar
             queue.start_time = time.time()
+            
             bot_voice.play(source, after=lambda e: self.play_next(ctx, e))
             
         except Exception as e:
             logger.error(f"Error starting playback: {e}")
             try:
+                from utils.embeds import create_error_embed
                 err_msg = f"Skipped **{song.title}**.\nReason: `Age-restricted, unavailable, or deleted.`"
                 asyncio.run_coroutine_threadsafe(ctx.send(embed=create_error_embed(err_msg)), self.bot.loop)
             except Exception:
                 pass
-            self.play_next(ctx)
+            self.play_next(ctx) # Skip gracefully if resolving fails
 
     async def _ensure_voice(self, ctx: commands.Context) -> bool:
         if not ctx.author.voice or not ctx.author.voice.channel:
@@ -179,8 +181,10 @@ class PrefixMusic(commands.Cog):
                 added_songs.append(song)
                 
             else:
-                song = YTDLSource.search_youtube(query) if platform == "search" else YTDLSource.from_url(query)
-                song.requester = ctx.author
+                if platform == "search":
+                    song = await YTDLSource.search_youtube(query, ctx.author, self.bot.loop)
+                else:
+                    song = await YTDLSource.from_url(query, ctx.author, platform, self.bot.loop)
                 added_songs.append(song)
                 
             # Enqueueing
@@ -199,7 +203,7 @@ class PrefixMusic(commands.Cog):
             if not bot_voice.is_playing() and not bot_voice.is_paused():
                 next_s = q.skip()
                 if next_s:
-                    self.start_playback(ctx, next_s, q)
+                    await self.start_playback(ctx, next_s, q)
                     
         except Exception as e:
             logger.error(f"Error extracting audio: {e}", exc_info=True)
@@ -262,7 +266,7 @@ class PrefixMusic(commands.Cog):
             bot_voice.stop()
         else:
             q.now_playing = prev_song
-            self.start_playback(ctx, prev_song, q)
+            await self.start_playback(ctx, prev_song, q)
             
         await ctx.send(embed=create_success_embed("Playing previous song. ⏮️"))
 
@@ -346,11 +350,47 @@ class PrefixMusic(commands.Cog):
 
     @commands.command(name="help")
     async def help_command(self, ctx: commands.Context):
-        embed = discord.Embed(title="🎵 Music Bot Commands", color=COLORS['default'])
-        embed.add_field(name="Playback", value="`e!play <query>` - Play song/playlist\n`e!pause` - Pause music\n`e!resume` - Resume music\n`e!stop` - Stop & clear queue", inline=False)
-        embed.add_field(name="Queue Management", value="`e!queue` - View queue\n`e!nowplaying` - View current song\n`e!skip` - Skip current\n`e!previous` - Play last song\n`e!remove <pos>` - Remove song\n`e!clear` - Clear all upcoming", inline=False)
-        embed.add_field(name="Settings", value="`e!volume <0-100>` - Set volume\n`e!loop <off/song/queue>` - Loop mode\n`e!shuffle` - Shuffle queue\n`e!disconnect` - Leave voice", inline=False)
-        embed.set_footer(text="Tip: You can also use slash commands (e.g., /play)!")
+        embed = discord.Embed(
+            title="🎶 Music Bot Commands",
+            description="Supports: 🔴 YouTube | 🟢 Spotify | 🟠 SoundCloud",
+            color=COLORS['default']
+        )
+        if self.bot.user.avatar:
+            embed.set_thumbnail(url=self.bot.user.avatar.url)
+            
+        embed.add_field(
+            name="🎵 Playback",
+            value=(
+                "`/play` | `e!play [query/url]` — Play from YouTube, Spotify, SoundCloud\n"
+                "`/pause` | `e!pause` — Pause current song\n"
+                "`/resume` | `e!resume` — Resume paused song\n"
+                "`/stop` | `e!stop` — Stop and clear queue\n"
+                "`/nowplaying` | `e!np` — Show current song"
+            ),
+            inline=False
+        )
+        embed.add_field(
+            name="⏭️ Queue",
+            value=(
+                "`/skip` | `e!skip` — Skip to next song\n"
+                "`/previous` | `e!previous` — Go back to previous song\n"
+                "`/queue` | `e!queue` — Show queue list\n"
+                "`/remove` | `e!remove [index]` — Remove song from queue\n"
+                "`/clear` | `e!clear` — Clear entire queue\n"
+                "`/shuffle` | `e!shuffle` — Shuffle queue"
+            ),
+            inline=False
+        )
+        embed.add_field(
+            name="⚙️ Settings",
+            value=(
+                "`/volume` | `e!volume [0-100]` — Set volume\n"
+                "`/loop` | `e!loop [off/song/queue]` — Set loop mode\n"
+                "`/disconnect` | `e!dc` — Disconnect bot"
+            ),
+            inline=False
+        )
+        embed.set_footer(text="Use /help or e!help anytime")
         await ctx.send(embed=embed)
 
 async def setup(bot):

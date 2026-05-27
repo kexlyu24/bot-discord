@@ -416,6 +416,51 @@ class Music(commands.Cog):
         else:
             await interaction.response.send_message("❌ I'm not in a voice channel.", ephemeral=True)
 
+    @app_commands.command(name="help", description="Shows all available music commands.")
+    async def help_command(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="🎶 Music Bot Commands",
+            description="Supports: 🔴 YouTube | 🟢 Spotify | 🟠 SoundCloud",
+            color=COLORS['default']
+        )
+        if self.bot.user.avatar:
+            embed.set_thumbnail(url=self.bot.user.avatar.url)
+            
+        embed.add_field(
+            name="🎵 Playback",
+            value=(
+                "`/play` | `e!play [query/url]` — Play from YouTube, Spotify, SoundCloud\n"
+                "`/pause` | `e!pause` — Pause current song\n"
+                "`/resume` | `e!resume` — Resume paused song\n"
+                "`/stop` | `e!stop` — Stop and clear queue\n"
+                "`/nowplaying` | `e!np` — Show current song"
+            ),
+            inline=False
+        )
+        embed.add_field(
+            name="⏭️ Queue",
+            value=(
+                "`/skip` | `e!skip` — Skip to next song\n"
+                "`/previous` | `e!previous` — Go back to previous song\n"
+                "`/queue` | `e!queue` — Show queue list\n"
+                "`/remove` | `e!remove [index]` — Remove song from queue\n"
+                "`/clear` | `e!clear` — Clear entire queue\n"
+                "`/shuffle` | `e!shuffle` — Shuffle queue"
+            ),
+            inline=False
+        )
+        embed.add_field(
+            name="⚙️ Settings",
+            value=(
+                "`/volume` | `e!volume [0-100]` — Set volume\n"
+                "`/loop` | `e!loop [off/song/queue]` — Set loop mode\n"
+                "`/disconnect` | `e!dc` — Disconnect bot"
+            ),
+            inline=False
+        )
+        embed.set_footer(text="Use /help or e!help anytime")
+        await interaction.response.send_message(embed=embed)
+
 # Required setup function for cogs
 async def setup(bot):
     await bot.add_cog(Music(bot))

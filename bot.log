@@ -722,3 +722,223 @@ Traceback (most recent call last):
 discord.app_commands.errors.CommandInvokeError: Command 'queue' raised an exception: NameError: name 'view' is not defined
 [2026-05-27 12:57:14] [INFO] discord.player: ffmpeg process 9936 successfully terminated with return code of 0.
 [2026-05-27 13:02:23] [INFO] discord.player: ffmpeg process 13900 successfully terminated with return code of 0.
+[2026-05-27 13:08:09] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 13:08:09] [INFO] discord: Disconnecting from voice channel in guild 790479858081071134
+[2026-05-27 13:08:09] [INFO] discord.voice_state: The voice handshake is being terminated for Channel ID 968065483981066270 (Guild ID 790479858081071134)
+[2026-05-27 13:08:13] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 13:08:13] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 13:14:33] [INFO] discord: =====================================
+[2026-05-27 13:14:33] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 13:14:33] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 13:14:33] [INFO] discord: ✅ FFmpeg: Found and ready.
+[2026-05-27 13:14:33] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 13:14:33] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 13:14:33] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 13:14:33] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 13:14:33] [INFO] discord: =====================================
+[2026-05-27 13:14:33] [INFO] discord.client: logging in using static token
+[2026-05-27 13:14:34] [INFO] discord: Setting up cogs...
+[2026-05-27 13:14:34] [INFO] discord: Loaded cog: events.py
+[2026-05-27 13:14:34] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:14:34] [INFO] discord: Loaded cog: music.py
+[2026-05-27 13:14:34] [ERROR] discord: Failed to load cog prefix_music.py: Extension 'cogs.prefix_music' raised an error: TypeError: SpotifyHandler.__init__() missing 2 required positional arguments: 'client_id' and 'client_secret'
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 974, in _load_from_module_spec
+    await setup(self)
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 357, in setup
+    await bot.add_cog(PrefixMusic(bot))
+                      ~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 29, in __init__
+    self.spotify = SpotifyHandler()
+                   ~~~~~~~~~~~~~~^^
+TypeError: SpotifyHandler.__init__() missing 2 required positional arguments: 'client_id' and 'client_secret'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\main.py", line 61, in setup_hook
+    await self.load_extension(f"cogs.{filename[:-3]}")
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 1040, in load_extension
+    await self._load_from_module_spec(spec, name)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python314\Lib\site-packages\discord\ext\commands\bot.py", line 979, in _load_from_module_spec
+    raise errors.ExtensionFailed(key, e) from e
+discord.ext.commands.errors.ExtensionFailed: Extension 'cogs.prefix_music' raised an error: TypeError: SpotifyHandler.__init__() missing 2 required positional arguments: 'client_id' and 'client_secret'
+[2026-05-27 13:14:34] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 13:14:35] [INFO] discord: Successfully synced 14 slash command(s).
+[2026-05-27 13:14:35] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 477a76fbe498341a88f6b05111db3f54).
+[2026-05-27 13:14:37] [INFO] discord: =====================================
+[2026-05-27 13:14:37] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 13:14:37] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 13:14:37] [INFO] discord: =====================================
+[2026-05-27 13:14:51] [INFO] discord.voice_state: Connecting to voice...
+[2026-05-27 13:14:51] [INFO] discord.voice_state: Starting voice handshake... (connection attempt 1)
+[2026-05-27 13:14:51] [INFO] discord.voice_state: Voice handshake complete. Endpoint found: c-sin21-c9ca539d.discord.media:8443
+[2026-05-27 13:14:51] [INFO] discord.voice_state: Voice connection complete.
+[2026-05-27 13:17:40] [INFO] discord.player: ffmpeg process 12024 successfully terminated with return code of 0.
+[2026-05-27 13:20:31] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 13:20:31] [INFO] discord: Disconnecting from voice channel in guild 790479858081071134
+[2026-05-27 13:20:31] [INFO] discord.voice_state: The voice handshake is being terminated for Channel ID 968065483981066270 (Guild ID 790479858081071134)
+[2026-05-27 13:20:31] [INFO] discord.player: ffmpeg process 8548 has not terminated. Waiting to terminate...
+[2026-05-27 13:20:31] [ERROR] discord: Error starting playback: Not connected to voice.
+[2026-05-27 13:20:31] [INFO] discord.player: ffmpeg process 9580 has not terminated. Waiting to terminate...
+[2026-05-27 13:20:31] [INFO] discord.player: ffmpeg process 9580 should have terminated with a return code of 1.
+[2026-05-27 13:20:31] [INFO] discord.player: ffmpeg process 8548 should have terminated with a return code of 1.
+[2026-05-27 13:20:33] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 13:20:33] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 13:20:37] [INFO] discord: =====================================
+[2026-05-27 13:20:37] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 13:20:37] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 13:20:37] [INFO] discord: ✅ FFmpeg: Found and ready.
+[2026-05-27 13:20:37] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 13:20:37] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 13:20:37] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 13:20:37] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 13:20:37] [INFO] discord: =====================================
+[2026-05-27 13:20:37] [INFO] discord.client: logging in using static token
+[2026-05-27 13:20:38] [INFO] discord: Setting up cogs...
+[2026-05-27 13:20:39] [INFO] discord: Loaded cog: events.py
+[2026-05-27 13:20:39] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:20:39] [INFO] discord: Loaded cog: music.py
+[2026-05-27 13:20:39] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:20:39] [INFO] discord: Loaded cog: prefix_music.py
+[2026-05-27 13:20:39] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 13:20:39] [INFO] discord: Successfully synced 14 slash command(s).
+[2026-05-27 13:20:40] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 71e8a98a5ce7ba16e1dcbe08081a3a44).
+[2026-05-27 13:20:42] [INFO] discord: =====================================
+[2026-05-27 13:20:42] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 13:20:42] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 13:20:42] [INFO] discord: =====================================
+[2026-05-27 13:20:48] [INFO] discord.voice_state: Connecting to voice...
+[2026-05-27 13:20:48] [INFO] discord.voice_state: Starting voice handshake... (connection attempt 1)
+[2026-05-27 13:20:48] [INFO] discord.voice_state: Voice handshake complete. Endpoint found: c-sin21-c9ca539d.discord.media:8443
+[2026-05-27 13:20:49] [INFO] discord.voice_state: Voice connection complete.
+[2026-05-27 13:20:49] [ERROR] discord: Error extracting audio: YTDLSource.search_youtube() missing 1 required positional argument: 'requester'
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 182, in play
+    song = YTDLSource.search_youtube(query) if platform == "search" else YTDLSource.from_url(query)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+TypeError: YTDLSource.search_youtube() missing 1 required positional argument: 'requester'
+[2026-05-27 13:22:14] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 13:22:14] [INFO] discord: Disconnecting from voice channel in guild 790479858081071134
+[2026-05-27 13:22:14] [INFO] discord.voice_state: The voice handshake is being terminated for Channel ID 968065483981066270 (Guild ID 790479858081071134)
+[2026-05-27 13:22:15] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 13:22:15] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 13:23:37] [INFO] discord: =====================================
+[2026-05-27 13:23:37] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 13:23:37] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 13:23:37] [INFO] discord: ✅ FFmpeg: Found and ready.
+[2026-05-27 13:23:37] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 13:23:37] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 13:23:37] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 13:23:37] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 13:23:37] [INFO] discord: =====================================
+[2026-05-27 13:23:37] [INFO] discord.client: logging in using static token
+[2026-05-27 13:23:38] [INFO] discord: Setting up cogs...
+[2026-05-27 13:23:38] [INFO] discord: Loaded cog: events.py
+[2026-05-27 13:23:38] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:23:38] [INFO] discord: Loaded cog: music.py
+[2026-05-27 13:23:38] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:23:38] [INFO] discord: Loaded cog: prefix_music.py
+[2026-05-27 13:23:38] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 13:23:39] [INFO] discord: Successfully synced 14 slash command(s).
+[2026-05-27 13:23:40] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: 0a883a47210a0112dddf7c9decf7586e).
+[2026-05-27 13:23:42] [INFO] discord: =====================================
+[2026-05-27 13:23:42] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 13:23:42] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 13:23:42] [INFO] discord: =====================================
+[2026-05-27 13:23:49] [INFO] discord.voice_state: Connecting to voice...
+[2026-05-27 13:23:49] [INFO] discord.voice_state: Starting voice handshake... (connection attempt 1)
+[2026-05-27 13:23:49] [INFO] discord.voice_state: Voice handshake complete. Endpoint found: c-sin21-c9ca539d.discord.media:8443
+[2026-05-27 13:23:49] [INFO] discord.voice_state: Voice connection complete.
+[2026-05-27 13:23:52] [ERROR] discord: Error starting playback: YTDLSource.from_url() missing 1 required positional argument: 'requester'
+[2026-05-27 13:23:52] [ERROR] discord: Error extracting audio: 'MusicQueue' object has no attribute 'pending_next_song'
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 76, in start_playback
+    source = YTDLSource.from_url(song.url).source
+             ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+TypeError: YTDLSource.from_url() missing 1 required positional argument: 'requester'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 204, in play
+    self.start_playback(ctx, next_s, q)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 88, in start_playback
+    self.play_next(ctx)
+    ~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\Documents\GitHub\bot-discord\cogs\prefix_music.py", line 55, in play_next
+    next_song = q.pending_next_song if q.pending_next_song else q.skip()
+                                       ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MusicQueue' object has no attribute 'pending_next_song'
+[2026-05-27 13:25:20] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 13:25:20] [INFO] discord: Disconnecting from voice channel in guild 790479858081071134
+[2026-05-27 13:25:20] [INFO] discord.voice_state: The voice handshake is being terminated for Channel ID 968065483981066270 (Guild ID 790479858081071134)
+[2026-05-27 13:25:21] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 13:25:21] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 13:27:00] [INFO] discord: =====================================
+[2026-05-27 13:27:00] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 13:27:00] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 13:27:01] [INFO] discord: ✅ FFmpeg: Found and ready.
+[2026-05-27 13:27:01] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 13:27:01] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 13:27:01] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 13:27:01] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 13:27:01] [INFO] discord: =====================================
+[2026-05-27 13:27:01] [INFO] discord.client: logging in using static token
+[2026-05-27 13:27:02] [INFO] discord: Setting up cogs...
+[2026-05-27 13:27:02] [INFO] discord: Loaded cog: events.py
+[2026-05-27 13:27:02] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:27:02] [INFO] discord: Loaded cog: music.py
+[2026-05-27 13:27:02] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:27:02] [INFO] discord: Loaded cog: prefix_music.py
+[2026-05-27 13:27:02] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 13:27:02] [INFO] discord: Successfully synced 14 slash command(s).
+[2026-05-27 13:27:04] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: bf1b31fe867d07e65c200cee3a55b931).
+[2026-05-27 13:27:06] [INFO] discord: =====================================
+[2026-05-27 13:27:06] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 13:27:06] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 13:27:06] [INFO] discord: =====================================
+[2026-05-27 13:27:22] [INFO] discord.voice_state: Connecting to voice...
+[2026-05-27 13:27:22] [INFO] discord.voice_state: Starting voice handshake... (connection attempt 1)
+[2026-05-27 13:27:23] [INFO] discord.voice_state: Voice handshake complete. Endpoint found: c-sin20-4fb476e0.discord.media:2087
+[2026-05-27 13:27:23] [INFO] discord.voice_state: Voice connection complete.
+[2026-05-27 13:27:32] [INFO] discord.player: ffmpeg process 14032 has not terminated. Waiting to terminate...
+[2026-05-27 13:27:33] [INFO] discord.player: ffmpeg process 14032 should have terminated with a return code of 1.
+[2026-05-27 13:27:45] [INFO] discord.voice_state: The voice handshake is being terminated for Channel ID 1304898533719277568 (Guild ID 790479858081071134)
+[2026-05-27 13:32:54] [INFO] discord: Initiating graceful shutdown...
+[2026-05-27 13:32:54] [INFO] discord: Closing bot connection to Discord...
+[2026-05-27 13:32:54] [INFO] discord: Bot offline. Goodbye!
+[2026-05-27 13:32:58] [INFO] discord: =====================================
+[2026-05-27 13:32:58] [INFO] discord: 🔍 Running System Pre-Flight Checks...
+[2026-05-27 13:32:58] [INFO] discord: ✅ Discord API: Token format appears valid.
+[2026-05-27 13:32:59] [INFO] discord: ✅ FFmpeg: Found and ready.
+[2026-05-27 13:32:59] [INFO] discord: ✅ yt-dlp: Version 2026.03.17 installed.
+[2026-05-27 13:32:59] [INFO] discord: ℹ️ NOTE: yt-dlp updates frequently to bypass YouTube blocks. If streams fail, run: pip install -U yt-dlp
+[2026-05-27 13:33:00] [ERROR] discord: ❌ Spotify API: Credentials invalid or failed to connect: http status: 403, code: -1 - https://api.spotify.com/v1/tracks/4cOdK2wGLETKBW3PvgPWqT:
+ Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+[2026-05-27 13:33:00] [ERROR] discord: 🔧 FIX: Verify your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in the .env file.
+[2026-05-27 13:33:00] [INFO] discord: =====================================
+[2026-05-27 13:33:00] [INFO] discord.client: logging in using static token
+[2026-05-27 13:33:01] [INFO] discord: Setting up cogs...
+[2026-05-27 13:33:01] [INFO] discord: Loaded cog: events.py
+[2026-05-27 13:33:01] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:33:01] [INFO] discord: Loaded cog: music.py
+[2026-05-27 13:33:01] [INFO] discord: Spotify API authenticated successfully.
+[2026-05-27 13:33:01] [INFO] discord: Loaded cog: prefix_music.py
+[2026-05-27 13:33:01] [INFO] discord: Syncing slash commands globally...
+[2026-05-27 13:33:02] [INFO] discord: Successfully synced 15 slash command(s).
+[2026-05-27 13:33:02] [INFO] discord.gateway: Shard ID None has connected to Gateway (Session ID: c12327248f090d625e25038ab6c9b644).
+[2026-05-27 13:33:04] [INFO] discord: =====================================
+[2026-05-27 13:33:05] [INFO] discord: Logged in as Eq's Bot (ID: 1509065764571840643)
+[2026-05-27 13:33:05] [INFO] discord: discord.py Version: 2.7.1
+[2026-05-27 13:33:05] [INFO] discord: =====================================
+[2026-05-27 13:33:57] [ERROR] discord: Prefix command error from comfortchainn: Command raised an exception: AttributeError: 'NoneType' object has no attribute 'is_paused'
+[2026-05-27 13:34:13] [INFO] discord.voice_state: Connecting to voice...
+[2026-05-27 13:34:13] [INFO] discord.voice_state: Starting voice handshake... (connection attempt 1)
+[2026-05-27 13:34:14] [INFO] discord.voice_state: Voice handshake complete. Endpoint found: c-sin21-c9ca539d.discord.media:8443
+[2026-05-27 13:34:14] [INFO] discord.voice_state: Voice connection complete.
