@@ -7,8 +7,8 @@ from typing import Optional
 
 logger = logging.getLogger('discord')
 
-# Import Shared Music State and UI
-import cogs.music
+# Import shared queues dictionary (single source of truth)
+from shared_state import queues
 from cogs.music import QueueView, LyricsView
 
 from config import COLORS, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_API_TOKEN
@@ -33,9 +33,9 @@ class PrefixMusic(commands.Cog):
         self.lyrics = LyricsHandler(GENIUS_API_TOKEN)
         
     def get_queue(self, guild_id: int) -> MusicQueue:
-        if guild_id not in cogs.music.queues:
-            cogs.music.queues[guild_id] = MusicQueue()
-        return cogs.music.queues[guild_id]
+        if guild_id not in queues:
+            queues[guild_id] = MusicQueue()
+        return queues[guild_id]
 
     # ==========================================
     # CORE PLAYBACK ENGINE
@@ -421,7 +421,7 @@ class PrefixMusic(commands.Cog):
         await update_presence(self.bot, None)
         if bot_voice:
             await bot_voice.disconnect()
-            cogs.music.queues.pop(ctx.guild.id, None)
+            queues.pop(ctx.guild.id, None)
             await ctx.send(embed=create_success_embed("Disconnected from voice and cleared queue. 👋"))
 
     @commands.command(name="help")

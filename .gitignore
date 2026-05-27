@@ -1,8 +1,30 @@
+# Python temporary files
 __pycache__/
 *.pyc
-.env
-logs/
+*.pyo
+*.pyd
 .venv/
+venv/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+
+# SQLite Databases
+*.db
+*.db-journal
+*.db-wal
+
+# Frontend dependencies and builds
+dashboard/frontend/.next/
+dashboard/frontend/node_modules/
+dashboard/frontend/tsconfig.tsbuildinfo
+
+# Log files
+logs/
 bot.log
 *.log
 .cache

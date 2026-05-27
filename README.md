@@ -18,11 +18,33 @@
 - Spotify Developer credentials
 - Genius API token
 
-## Installation
-1. Clone the repository
-2. pip install -r requirements.txt
-3. Copy .env.example to .env and fill in tokens
-4. Run: py main.py
+## Quick Start
+
+### 1. Install Python dependencies
+```bash
+pip install -r requirements.txt
+pip install -r dashboard/backend/requirements.txt
+```
+
+### 2. Install Frontend dependencies
+```bash
+cd dashboard/frontend
+npm install
+```
+
+### 3. Configure environment
+```bash
+cp .env.example .env
+cp dashboard/backend/.env.example dashboard/backend/.env
+```
+Fill in all tokens in both `.env` files.
+
+### 4. Run everything
+- **Windows**: double-click `start.bat`
+- **Linux/Mac**: `bash start.sh`
+
+### 5. Open dashboard
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Commands
 | Command | Description |

@@ -4,8 +4,8 @@ import asyncio
 import logging
 from typing import Dict
 
-# Import cogs.music so we can safely pop from its queues dictionary
-import cogs.music
+# Import shared queues dictionary (single source of truth)
+from shared_state import queues
 
 logger = logging.getLogger('discord')
 
@@ -34,7 +34,16 @@ class VoiceEvents(commands.Cog):
                     await voice_client.disconnect()
                     
                     # Clean up MusicQueue memory to prevent RAM leaks
-                    cogs.music.queues.pop(guild_id, None)
+                    queues.pop(guild_id, None)
+                    try:
+                        from app.core.ws_manager import ws_manager
+                        await ws_manager.broadcast(guild_id, {
+                            "event": "player_stopped",
+                            "guild_id": str(guild_id),
+                            "data": {"reason": "bot_disconnected"}
+                        })
+                    except ImportError:
+                        pass
                     
         except asyncio.CancelledError:
             # Timer was successfully cancelled because a user rejoined the channel
@@ -51,9 +60,18 @@ class VoiceEvents(commands.Cog):
                     await bot_voice.disconnect()
                     
                     # Get last text channel and pop from queues
-                    q = cogs.music.queues.get(guild_id)
+                    q = queues.get(guild_id)
                     last_channel = q.last_channel if q else None
-                    cogs.music.queues.pop(guild_id, None)
+                    queues.pop(guild_id, None)
+                    try:
+                        from app.core.ws_manager import ws_manager
+                        await ws_manager.broadcast(guild_id, {
+                            "event": "player_stopped",
+                            "guild_id": str(guild_id),
+                            "data": {"reason": "bot_disconnected"}
+                        })
+                    except ImportError:
+                        pass
                     
                     if last_channel:
                         try:
@@ -107,7 +125,16 @@ class VoiceEvents(commands.Cog):
             self.cancel_idle_timer(guild_id)
                 
             # Pop the queue to plug the memory leak
-            cogs.music.queues.pop(guild_id, None)
+            queues.pop(guild_id, None)
+            try:
+                from app.core.ws_manager import ws_manager
+                await ws_manager.broadcast(guild_id, {
+                    "event": "player_stopped",
+                    "guild_id": str(guild_id),
+                    "data": {"reason": "bot_disconnected"}
+                })
+            except ImportError:
+                pass
             return
 
         # ==========================================

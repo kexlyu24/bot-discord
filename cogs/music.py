@@ -23,8 +23,8 @@ from utils.embeds import (
     create_queue_embed, create_added_song_embed, create_added_playlist_embed
 )
 
-# Global dictionary mapping guild_id -> MusicQueue to keep state per server
-queues: Dict[int, MusicQueue] = {}
+# Import shared queues dictionary (single source of truth)
+from shared_state import queues
 
 class QueueView(discord.ui.View):
     """Interactive Discord UI View for paginating the music queue."""
@@ -203,6 +203,21 @@ class Music(commands.Cog):
             voice_events_cog = self.bot.get_cog("VoiceEvents")
             if voice_events_cog:
                 voice_events_cog.start_idle_timer(interaction.guild_id, bot_voice)
+                
+            # Broadcast player_stopped event to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                asyncio.run_coroutine_threadsafe(
+                    ws_manager.broadcast(interaction.guild_id, {
+                        "event": "player_stopped",
+                        "guild_id": str(interaction.guild_id),
+                        "data": state_data
+                    }),
+                    self.bot.loop
+                )
+            except ImportError:
+                pass
             return # End of queue reached
 
         asyncio.run_coroutine_threadsafe(self.start_playback(interaction, next_song, q), self.bot.loop)
@@ -237,6 +252,18 @@ class Music(commands.Cog):
             await update_presence(self.bot, song, paused=False)
             
             bot_voice.play(source, after=lambda e: self.play_next(interaction, e))
+            
+            # Broadcast song_started event to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                await ws_manager.broadcast(interaction.guild_id, {
+                    "event": "song_started",
+                    "guild_id": str(interaction.guild_id),
+                    "data": state_data
+                })
+            except ImportError:
+                pass
             
         except Exception as e:
             logger.error(f"Error starting playback: {e}")
@@ -349,6 +376,18 @@ class Music(commands.Cog):
             else:
                 await interaction.followup.send(embed=create_added_playlist_embed("Spotify Playlist / Album", query, "spotify", len(added_songs), total_dur))
                 
+            # Broadcast queue updated to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                await ws_manager.broadcast(interaction.guild_id, {
+                    "event": "queue_updated",
+                    "guild_id": str(interaction.guild_id),
+                    "data": state_data
+                })
+            except ImportError:
+                pass
+
             # --- Start playback if currently idle ---
             if not bot_voice.is_playing() and not bot_voice.is_paused():
                 next_song = q.skip() 
@@ -372,6 +411,18 @@ class Music(commands.Cog):
             if q.now_playing:
                 await update_presence(self.bot, q.now_playing, paused=True)
             await interaction.response.send_message("⏸️ **Paused the music.**")
+            
+            # Broadcast to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                await ws_manager.broadcast(interaction.guild_id, {
+                    "event": "state_update",
+                    "guild_id": str(interaction.guild_id),
+                    "data": state_data
+                })
+            except ImportError:
+                pass
         else:
             await interaction.response.send_message("❌ Nothing is currently playing.", ephemeral=True)
             
@@ -388,6 +439,18 @@ class Music(commands.Cog):
             if q.now_playing:
                 await update_presence(self.bot, q.now_playing, paused=False)
             await interaction.response.send_message("▶️ **Resumed the music.**")
+            
+            # Broadcast to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                await ws_manager.broadcast(interaction.guild_id, {
+                    "event": "state_update",
+                    "guild_id": str(interaction.guild_id),
+                    "data": state_data
+                })
+            except ImportError:
+                pass
         else:
             await interaction.response.send_message("❌ The music is not paused.", ephemeral=True)
             
@@ -414,6 +477,18 @@ class Music(commands.Cog):
         if voice_events_cog and bot_voice:
             voice_events_cog.start_idle_timer(interaction.guild_id, bot_voice)
 
+        # Broadcast player_stopped event to Web clients
+        try:
+            from app.core.ws_manager import ws_manager, get_player_state_data
+            state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+            await ws_manager.broadcast(interaction.guild_id, {
+                "event": "player_stopped",
+                "guild_id": str(interaction.guild_id),
+                "data": state_data
+            })
+        except ImportError:
+            pass
+
 
     @app_commands.command(name="skip", description="Skips to the next song.")
     async def skip(self, interaction: discord.Interaction):
@@ -433,6 +508,18 @@ class Music(commands.Cog):
         else:
             await interaction.response.send_message("⏭️ **Skipped.** (Queue advanced manually)")
 
+        # Broadcast song_ended event to Web clients
+        try:
+            from app.core.ws_manager import ws_manager, get_player_state_data
+            state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+            await ws_manager.broadcast(interaction.guild_id, {
+                "event": "song_ended",
+                "guild_id": str(interaction.guild_id),
+                "data": state_data
+            })
+        except ImportError:
+            pass
+
 
     @app_commands.command(name="previous", description="Goes back to the previous song.")
     async def previous(self, interaction: discord.Interaction):
@@ -448,6 +535,18 @@ class Music(commands.Cog):
             if bot_voice and bot_voice.is_playing():
                 bot_voice.stop()
             await interaction.response.send_message("⏮️ **Going back to previous song.**")
+            
+            # Broadcast update to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                await ws_manager.broadcast(interaction.guild_id, {
+                    "event": "state_update",
+                    "guild_id": str(interaction.guild_id),
+                    "data": state_data
+                })
+            except ImportError:
+                pass
         else:
             await interaction.response.send_message("❌ No playback history to go back to.", ephemeral=True)
 
@@ -490,6 +589,18 @@ class Music(commands.Cog):
         if bot_voice and bot_voice.source:
             bot_voice.source.volume = level / 100.0
             await interaction.response.send_message(f"🔊 **Volume set to {level}%.**")
+            
+            # Broadcast to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                await ws_manager.broadcast(interaction.guild_id, {
+                    "event": "state_update",
+                    "guild_id": str(interaction.guild_id),
+                    "data": state_data
+                })
+            except ImportError:
+                pass
         else:
             await interaction.response.send_message("❌ Cannot set volume right now (no active playback).", ephemeral=True)
 
@@ -506,6 +617,18 @@ class Music(commands.Cog):
 
         q.loop_mode = mode.value
         await interaction.response.send_message(f"🔁 **Loop mode set to:** {mode.name}")
+        
+        # Broadcast to Web clients
+        try:
+            from app.core.ws_manager import ws_manager, get_player_state_data
+            state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+            await ws_manager.broadcast(interaction.guild_id, {
+                "event": "state_update",
+                "guild_id": str(interaction.guild_id),
+                "data": state_data
+            })
+        except ImportError:
+            pass
 
 
     @app_commands.command(name="shuffle", description="Shuffles the upcoming queue.")
@@ -515,6 +638,18 @@ class Music(commands.Cog):
 
         q.shuffle()
         await interaction.response.send_message("🔀 **Queue shuffled!**")
+        
+        # Broadcast queue updated to Web clients
+        try:
+            from app.core.ws_manager import ws_manager, get_player_state_data
+            state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+            await ws_manager.broadcast(interaction.guild_id, {
+                "event": "queue_updated",
+                "guild_id": str(interaction.guild_id),
+                "data": state_data
+            })
+        except ImportError:
+            pass
 
 
     @app_commands.command(name="remove", description="Removes a song from the queue by its index.")
@@ -525,6 +660,18 @@ class Music(commands.Cog):
         song = q.remove(index - 1) 
         if song:
             await interaction.response.send_message(f"🗑️ Removed **{song.title}** from the queue.")
+            
+            # Broadcast queue updated to Web clients
+            try:
+                from app.core.ws_manager import ws_manager, get_player_state_data
+                state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+                await ws_manager.broadcast(interaction.guild_id, {
+                    "event": "queue_updated",
+                    "guild_id": str(interaction.guild_id),
+                    "data": state_data
+                })
+            except ImportError:
+                pass
         else:
             await interaction.response.send_message("❌ Invalid queue index.", ephemeral=True)
 
@@ -541,6 +688,18 @@ class Music(commands.Cog):
         voice_events_cog = self.bot.get_cog("VoiceEvents")
         if voice_events_cog and bot_voice:
             voice_events_cog.start_idle_timer(interaction.guild_id, bot_voice)
+
+        # Broadcast queue updated to Web clients
+        try:
+            from app.core.ws_manager import ws_manager, get_player_state_data
+            state_data = get_player_state_data(str(interaction.guild_id), self.bot)
+            await ws_manager.broadcast(interaction.guild_id, {
+                "event": "queue_updated",
+                "guild_id": str(interaction.guild_id),
+                "data": state_data
+            })
+        except ImportError:
+            pass
 
 
     @app_commands.command(name="disconnect", description="Disconnects the bot from the voice channel.")
