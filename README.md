@@ -11,6 +11,7 @@ A production-ready Discord music bot built with Python (`discord.py`), supportin
 - 📊 **Now Playing**: Clean embed showing track thumbnail, requester, and text-based progress bar.
 - ⚡ **Resilient Streaming**: Optimized FFmpeg settings to auto-reconnect on network drops.
 - 🔐 **Robust Error Handling**: Pre-flight system checks and friendly UI error alerts.
+- 🎤 **Lyrics**: `/lyrics` or `e!lyrics [song title]` to get song lyrics (auto-detects current song if no title provided, powered by Genius).
 
 ---
 
@@ -88,3 +89,4 @@ python main.py
 | `/remove <index>` | Removes a specific track from the queue |
 | `/clear` | Clears all upcoming tracks |
 | `/disconnect` | Disconnects the bot from the voice channel |
+| `/lyrics [song]` | `/lyrics` or `e!lyrics [song title]` — Get song lyrics (auto-detects current song, powered by Genius) |

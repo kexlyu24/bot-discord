@@ -57,5 +57,13 @@ def run_checks(discord_token: str, spotify_client_id: str, spotify_client_secret
         logger.warning("⚠️ Spotify API: Credentials missing.")
         logger.warning("🔧 FIX: Add credentials to your .env file. Spotify links will immediately fail if a user tries to play one.")
 
+    # 4. Check Genius API (Optional)
+    import os
+    genius_token = os.getenv("GENIUS_API_TOKEN")
+    if not genius_token:
+        logger.warning("⚠️ Genius API token not set. /lyrics command will be unavailable.")
+    else:
+        logger.info("✅ Genius API: Token found.")
+
     logger.info("=====================================")
     return all_passed

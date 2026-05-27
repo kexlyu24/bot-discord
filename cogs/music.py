@@ -11,10 +11,12 @@ from typing import Dict, Optional, Literal
 logger = logging.getLogger('discord')
 
 # Import Custom Handlers & Configs
-from config import COLORS, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
+from config import COLORS, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_API_TOKEN
+from utils.lyrics_handler import LyricsHandler, LyricsServiceError
 from utils.platform_detector import detect_platform
 from utils.spotify_handler import SpotifyHandler, SpotifyError
 from utils.music_engine import MusicQueue, YTDLSource, Song
+from utils.presence import update_presence
 from utils.embeds import (
     create_error_embed, create_success_embed, create_now_playing_embed,
     create_queue_embed, create_added_song_embed, create_added_playlist_embed
@@ -70,11 +72,85 @@ class QueueView(discord.ui.View):
             await interaction.response.defer()
 
 
+class LyricsView(discord.ui.View):
+    """Interactive Discord UI View for paginating lyrics."""
+    def __init__(self, title: str, artist: str, pages: list[str], url: str, thumbnail: Optional[str] = None):
+        super().__init__(timeout=120)
+        self.title = title
+        self.artist = artist
+        self.pages = pages
+        self.url = url
+        self.thumbnail = thumbnail
+        self.page = 1
+        self.max_pages = len(pages)
+        
+    def generate_embed(self) -> discord.Embed:
+        embed = discord.Embed(
+            title=f"🎤 {self.title} — {self.artist}",
+            url=self.url,
+            description=self.pages[self.page - 1],
+            color=0x9B59B6  # Purple
+        )
+        if self.thumbnail:
+            embed.set_thumbnail(url=self.thumbnail)
+        embed.set_footer(text=f"Powered by Genius | Page {self.page} of {self.max_pages}")
+        return embed
+
+    @discord.ui.button(label="Previous", style=discord.ButtonStyle.blurple)
+    async def prev_btn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.page > 1:
+            self.page -= 1
+            await interaction.response.edit_message(embed=self.generate_embed(), view=self)
+        else:
+            await interaction.response.defer()
+
+    @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
+    async def next_btn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.page < self.max_pages:
+            self.page += 1
+            await interaction.response.edit_message(embed=self.generate_embed(), view=self)
+        else:
+            await interaction.response.defer()
+
+    @staticmethod
+    def paginate_lyrics(lyrics: str, max_chars: int = 4000) -> list[str]:
+        if not lyrics:
+            return ["No lyrics content found."]
+        
+        pages = []
+        current_page = []
+        current_length = 0
+        
+        for line in lyrics.split('\n'):
+            if len(line) > max_chars:
+                if current_page:
+                    pages.append('\n'.join(current_page))
+                    current_page = []
+                    current_length = 0
+                for i in range(0, len(line), max_chars):
+                    pages.append(line[i:i+max_chars])
+                continue
+                
+            if current_length + len(line) + 1 > max_chars:
+                pages.append('\n'.join(current_page))
+                current_page = [line]
+                current_length = len(line) + 1
+            else:
+                current_page.append(line)
+                current_length += len(line) + 1
+                
+        if current_page:
+            pages.append('\n'.join(current_page))
+            
+        return pages
+
+
 class Music(commands.Cog):
     """Music Cog holding all audio slash commands."""
     def __init__(self, bot):
         self.bot = bot
         self.spotify = SpotifyHandler(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
+        self.lyrics = LyricsHandler(GENIUS_API_TOKEN)
 
     def get_queue(self, guild_id: int) -> MusicQueue:
         """Retrieves or instantiates a queue for the given guild."""
@@ -125,6 +201,7 @@ class Music(commands.Cog):
             next_song = q.skip(force=False) 
 
         if not next_song:
+            asyncio.run_coroutine_threadsafe(update_presence(self.bot, None), self.bot.loop)
             return # End of queue reached
 
         asyncio.run_coroutine_threadsafe(self.start_playback(interaction, next_song, q), self.bot.loop)
@@ -149,6 +226,9 @@ class Music(commands.Cog):
             
             # Start timer for /nowplaying progress bar
             queue.start_time = time.time()
+            
+            # Update presence
+            await update_presence(self.bot, song, paused=False)
             
             bot_voice.play(source, after=lambda e: self.play_next(interaction, e))
             
@@ -274,6 +354,9 @@ class Music(commands.Cog):
         bot_voice = interaction.guild.voice_client
         if bot_voice and bot_voice.is_playing():
             bot_voice.pause()
+            q = self.get_queue(interaction.guild_id)
+            if q.now_playing:
+                await update_presence(self.bot, q.now_playing, paused=True)
             await interaction.response.send_message("⏸️ **Paused the music.**")
         else:
             await interaction.response.send_message("❌ Nothing is currently playing.", ephemeral=True)
@@ -285,6 +368,9 @@ class Music(commands.Cog):
         bot_voice = interaction.guild.voice_client
         if bot_voice and bot_voice.is_paused():
             bot_voice.resume()
+            q = self.get_queue(interaction.guild_id)
+            if q.now_playing:
+                await update_presence(self.bot, q.now_playing, paused=False)
             await interaction.response.send_message("▶️ **Resumed the music.**")
         else:
             await interaction.response.send_message("❌ The music is not paused.", ephemeral=True)
@@ -298,6 +384,7 @@ class Music(commands.Cog):
         
         q.clear()
         q.pending_next_song = None # Reset overrides
+        await update_presence(self.bot, None)
         
         if bot_voice:
             bot_voice.stop()
@@ -411,6 +498,7 @@ class Music(commands.Cog):
             q = self.get_queue(interaction.guild_id)
             q.clear()
             q.pending_next_song = None
+            await update_presence(self.bot, None)
             await bot_voice.disconnect()
             await interaction.response.send_message("👋 **Disconnected from the voice channel.**")
         else:
@@ -460,6 +548,56 @@ class Music(commands.Cog):
         )
         embed.set_footer(text="Use /help or e!help anytime")
         await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="lyrics", description="Shows the lyrics of the current song or a searched song.")
+    @app_commands.describe(query="The song title to search for (optional).")
+    async def lyrics(self, interaction: discord.Interaction, query: Optional[str] = None):
+        await interaction.response.defer()
+        
+        q = self.get_queue(interaction.guild_id)
+        
+        search_title = ""
+        search_artist = ""
+        
+        if query:
+            search_title = query
+        else:
+            if not q.now_playing:
+                return await interaction.followup.send(
+                    embed=create_error_embed("❌ No song is currently playing. Use /lyrics [song title] instead.")
+                )
+            search_title = q.now_playing.title
+            search_artist = getattr(q.now_playing, 'artist', '')
+            
+        try:
+            song_info = await self.bot.loop.run_in_executor(
+                None, self.lyrics.get_lyrics, search_title, search_artist
+            )
+        except LyricsServiceError:
+            return await interaction.followup.send(
+                embed=create_error_embed("❌ Lyrics service unavailable, try again later")
+            )
+            
+        if not song_info or not song_info.get("lyrics"):
+            return await interaction.followup.send(
+                embed=create_error_embed(f"❌ Lyrics not found for {query or search_title}")
+            )
+            
+        # Paginate lyrics
+        pages = LyricsView.paginate_lyrics(song_info["lyrics"])
+        
+        view = LyricsView(
+            title=song_info["title"],
+            artist=song_info["artist"],
+            pages=pages,
+            url=song_info["url"],
+            thumbnail=song_info["thumbnail"]
+        )
+        
+        if len(pages) == 1:
+            await interaction.followup.send(embed=view.generate_embed())
+        else:
+            await interaction.followup.send(embed=view.generate_embed(), view=view)
 
 # Required setup function for cogs
 async def setup(bot):

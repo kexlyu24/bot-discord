@@ -9,12 +9,14 @@ logger = logging.getLogger('discord')
 
 # Import Shared Music State and UI
 import cogs.music
-from cogs.music import QueueView
+from cogs.music import QueueView, LyricsView
 
-from config import COLORS, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
+from config import COLORS, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_API_TOKEN
+from utils.lyrics_handler import LyricsHandler, LyricsServiceError
 from utils.platform_detector import detect_platform
 from utils.spotify_handler import SpotifyHandler, SpotifyError
 from utils.music_engine import MusicQueue, YTDLSource, Song
+from utils.presence import update_presence
 from utils.embeds import (
     create_error_embed, create_success_embed, create_now_playing_embed,
     create_queue_embed, create_added_song_embed, create_added_playlist_embed
@@ -27,6 +29,7 @@ class PrefixMusic(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.spotify = SpotifyHandler(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
+        self.lyrics = LyricsHandler(GENIUS_API_TOKEN)
         
     def get_queue(self, guild_id: int) -> MusicQueue:
         if guild_id not in cogs.music.queues:
@@ -53,6 +56,7 @@ class PrefixMusic(commands.Cog):
             next_song = q.skip(force=False) 
 
         if not next_song:
+            asyncio.run_coroutine_threadsafe(update_presence(self.bot, None), self.bot.loop)
             return # End of queue reached
 
         asyncio.run_coroutine_threadsafe(self.start_playback(ctx, next_song, q), self.bot.loop)
@@ -76,6 +80,9 @@ class PrefixMusic(commands.Cog):
             
             # Start timer for /nowplaying progress bar
             queue.start_time = time.time()
+            
+            # Update presence
+            await update_presence(self.bot, song, paused=False)
             
             bot_voice.play(source, after=lambda e: self.play_next(ctx, e))
             
@@ -215,6 +222,9 @@ class PrefixMusic(commands.Cog):
         bot_voice = ctx.guild.voice_client
         if bot_voice.is_playing():
             bot_voice.pause()
+            q = self.get_queue(ctx.guild.id)
+            if q.now_playing:
+                await update_presence(self.bot, q.now_playing, paused=True)
             await ctx.send(embed=create_success_embed("Paused the music. ⏸️"))
         else:
             await ctx.send(embed=create_error_embed("Audio is not playing."))
@@ -225,6 +235,9 @@ class PrefixMusic(commands.Cog):
         bot_voice = ctx.guild.voice_client
         if bot_voice.is_paused():
             bot_voice.resume()
+            q = self.get_queue(ctx.guild.id)
+            if q.now_playing:
+                await update_presence(self.bot, q.now_playing, paused=False)
             await ctx.send(embed=create_success_embed("Resumed the music. ▶️"))
         else:
             await ctx.send(embed=create_error_embed("Audio is not paused."))
@@ -236,6 +249,7 @@ class PrefixMusic(commands.Cog):
         q = self.get_queue(ctx.guild.id)
         q.clear()
         q.now_playing = None
+        await update_presence(self.bot, None)
         if bot_voice.is_playing() or bot_voice.is_paused():
             bot_voice.stop()
         await ctx.send(embed=create_success_embed("Stopped playback and cleared the queue. 🛑"))
@@ -343,6 +357,7 @@ class PrefixMusic(commands.Cog):
         bot_voice = ctx.guild.voice_client
         q = self.get_queue(ctx.guild.id)
         q.clear()
+        await update_presence(self.bot, None)
         if bot_voice:
             await bot_voice.disconnect()
             cogs.music.queues.pop(ctx.guild.id, None)
@@ -392,6 +407,54 @@ class PrefixMusic(commands.Cog):
         )
         embed.set_footer(text="Use /help or e!help anytime")
         await ctx.send(embed=embed)
+
+    @commands.command(name="lyrics")
+    async def lyrics_command(self, ctx: commands.Context, *, query: Optional[str] = None):
+        async with ctx.typing():
+            q = self.get_queue(ctx.guild.id)
+            
+            search_title = ""
+            search_artist = ""
+            
+            if query:
+                search_title = query
+            else:
+                if not q.now_playing:
+                    return await ctx.send(
+                        embed=create_error_embed("❌ No song is currently playing. Use /lyrics [song title] instead.")
+                    )
+                search_title = q.now_playing.title
+                search_artist = getattr(q.now_playing, 'artist', '')
+                
+            try:
+                song_info = await self.bot.loop.run_in_executor(
+                    None, self.lyrics.get_lyrics, search_title, search_artist
+                )
+            except LyricsServiceError:
+                return await ctx.send(
+                    embed=create_error_embed("❌ Lyrics service unavailable, try again later")
+                )
+                
+            if not song_info or not song_info.get("lyrics"):
+                return await ctx.send(
+                    embed=create_error_embed(f"❌ Lyrics not found for {query or search_title}")
+                )
+                
+            # Paginate lyrics
+            pages = LyricsView.paginate_lyrics(song_info["lyrics"])
+            
+            view = LyricsView(
+                title=song_info["title"],
+                artist=song_info["artist"],
+                pages=pages,
+                url=song_info["url"],
+                thumbnail=song_info["thumbnail"]
+            )
+            
+            if len(pages) == 1:
+                await ctx.send(embed=view.generate_embed())
+            else:
+                await ctx.send(embed=view.generate_embed(), view=view)
 
 async def setup(bot):
     await bot.add_cog(PrefixMusic(bot))

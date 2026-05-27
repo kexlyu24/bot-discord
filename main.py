@@ -6,6 +6,7 @@ import os
 import asyncio
 from config import DISCORD_TOKEN, LOG_FILE, COGS_DIR, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 from utils.startup_checker import run_checks
+from utils.presence import update_presence
 
 # ==========================================
 # 1. LOGGING SETUP
@@ -142,8 +143,7 @@ class MusicBot(commands.Bot):
         logger.info(f"=====================================")
         
         # Set bot presence
-        activity = discord.Activity(type=discord.ActivityType.listening, name="music | /play")
-        await self.change_presence(activity=activity)
+        await update_presence(self)
 
     # ==========================================
     # 4. GRACEFUL SHUTDOWN
